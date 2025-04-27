@@ -1,0 +1,6 @@
+develop/
+data/
+.venv/
+.idea/
+__pycache__
+app.log
