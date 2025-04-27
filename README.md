@@ -29,7 +29,7 @@
 1.  **Клонируйте репозиторий:**
     ```bash
     git clone https://github.com/Beriya73/XRPL_executor
-    cd XRPL_executor       # Перейдите в папку клонированного проекта
+    cd XRPL_executor
     ```
 
 2.  **Создайте и активируйте виртуальное окружение (Рекомендуется):**
