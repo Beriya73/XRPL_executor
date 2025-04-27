@@ -4,7 +4,7 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 # Путь к вашему виртуальному окружению (используем $HOME для домашней директории)
-VENV_DIR="$HOME/venv_monad"
+VENV_DIR="$HOME/XRPL_executor/venv"
 
 # Имя вашего Python-скрипта
 PYTHON_SCRIPT="main.py" # <<< Убедитесь, что имя файла верное
@@ -24,7 +24,7 @@ source "$VENV_DIR/bin/activate"
 cd "$SCRIPT_DIR"
 
 # Запуск Python-скрипта
-echo "Запуск скрипта: Monad..."
+echo "Запуск скрипта: Xrpl Executor..."
 # Используем python3, т.к. venv уже активирован и PATH настроен
 python3 "$PYTHON_SCRIPT"
 

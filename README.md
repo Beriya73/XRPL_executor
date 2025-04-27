@@ -51,6 +51,7 @@
     Файл `requirements.txt` содержит список всех необходимых пакетов Python.
     ```bash
     pip install -r requirements.txt
+	chmod +x start.sh
     ```
 
 
@@ -79,16 +80,16 @@
 1.  **Перейдите** в корневую директорию проекта в вашем терминале.
 2.  **Активируйте** виртуальное окружение (если вы его создавали):
     *   Windows: `.\venv\Scripts\activate`
-    *   macOS/Linux: `source venv/bin/activate`
+    *   macOS/Linux: `source venv/bin/activate	`
 3.  **Запустите скрипт:**
     ```bash
-    start.sh	
+    ./start.sh	
     ```
     *(На некоторых системах macOS/Linux может потребоваться `python3 main.py`)*
 4.  **Следуйте меню:**
     Скрипт отобразит меню:
     ```
-    --- XRPL Executor v1.2 ---
+    --- XRPL Executor v1.0 ---
     Загружено ключей/кошельков: X
     Используется прокси: Да/Нет
 
