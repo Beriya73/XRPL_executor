@@ -375,7 +375,7 @@ async def main(private_key, proxy=None):
     await pause(time_min, time_max)
     await xrpl.add_liquidity(RISE_ADDRESS, RIBBIT_ADDRESS, 1, stable=False)
 
-    await xrpl.w3.provider.disconnect(custom_session)
+    await xrpl.w3.provider.disconnect()
 
 
 if __name__ == "__main__":
