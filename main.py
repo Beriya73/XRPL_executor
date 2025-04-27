@@ -23,7 +23,7 @@ except ImportError as e:
 
 # Настройка логирования
 logger.add("app.log", rotation="10 MB", level="INFO") # Установим уровень INFO
-version = 1.1 # Увеличим версию для отслеживания изменений
+version = 1.0 # Увеличим версию для отслеживания изменений
 
 def clear_terminal():
     """Очищает экран терминала для Windows, Linux и macOS."""
