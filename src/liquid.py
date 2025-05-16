@@ -170,11 +170,53 @@ class LiquidXRPL(Client):
         if reserve_eth == 0 or reserve_erc20 == 0:
              logger.warning(f"Один из резервов в пуле {token_name}/{eth_name} (stable={stable}) равен нулю. Невозможно рассчитать пропорцию. Пропуск.")
              return None
-        else:
-            amount_wei_erc20_desired = int(amount_wei_eth_desired * reserve_erc20 / reserve_eth)
+
+
+        # 1. Максимальное количество WXRP, которое мы можем добавить (исходя из % от баланса WXRP)
+        # Уберем simplify_wei_balance для начального расчета, чтобы быть точнее.
+        # Упрощение применим позже к финальному выбранному значению.
+        max_eth_from_balance_percentage = int(balance_eth['amount_in_wei'] * (percentage / 100))
+
+        if max_eth_from_balance_percentage == 0:
+            logger.warning(f"Рассчитанное количество {eth_name} для добавления (из % баланса) равно 0. Пропуск.")
+            return None
+
+        # 2. Сколько ERC20 потребуется для этого количества WXRP
+        required_erc20_for_max_eth = int(max_eth_from_balance_percentage * reserve_erc20 / reserve_eth)
+
+        # 3. Максимальное количество ERC20, которое мы можем добавить (исходя из % от баланса ERC20)
+        # Это нужно, если мы хотим, чтобы ERC20 был "ведущим" при нехватке WXRP
+        # Но для add_liquidity_ETH обычно WXRP является ведущим.
+        # Поэтому, будем исходить из того, сколько WXRP мы можем себе позволить,
+        # учитывая доступный баланс ERC20.
+
+        # Сколько WXRP мы можем добавить, если у нас есть ВЕСЬ наш баланс ERC20
+        # (т.е. если бы ERC20 был лимитирующим фактором)
+        eth_for_full_erc20_balance = int(balance_erc20['amount_in_wei'] * reserve_eth / reserve_erc20)
+
+        # Выбираем финальное количество WXRP для добавления:
+        # Это МЕНЬШЕЕ из:
+        #   а) % от нашего баланса WXRP
+        #   б) количество WXRP, которое мы можем себе позволить, имея весь наш баланс ERC20
+        #   в) (неявно) весь наш баланс WXRP (потому что max_eth_from_balance_percentage <= balance_eth)
+
+        amount_wei_eth_to_add = min(max_eth_from_balance_percentage, eth_for_full_erc20_balance)
+
+        # Теперь, когда мы определили реальное количество WXRP, которое МОЖЕМ добавить,
+        # применяем simplify_wei_balance к нему.
+        amount_wei_eth_desired = self.simplify_wei_balance(amount_wei_eth_to_add)
+
+        if amount_wei_eth_desired == 0:
+            logger.warning(
+                f"После учета балансов и simplify, рассчитанное количество {eth_name} для добавления равно 0. Пропуск.")
+            return None
+
+        # Рассчитываем соответствующее количество ERC20 для этого amount_wei_eth_desired
+        amount_wei_erc20_desired = int(amount_wei_eth_desired * reserve_erc20 / reserve_eth)
 
         if amount_wei_erc20_desired == 0:
-            logger.error(f"Расчетное количество {token_name} для добавления равно 0 (из-за пропорции резервов). Добавление ликвидности невозможно.")
+            logger.error(
+                f"Расчетное количество {token_name} для добавления равно 0 (из-за пропорции резервов для выбранного ETH). Добавление ликвидности невозможно.")
             return None
 
         amount_wei_erc20_desired_human = amount_wei_erc20_desired / 10 ** decimals_erc20
